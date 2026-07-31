@@ -2,7 +2,7 @@ name: Deploy dashboard to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, redesign]
     paths:
       - 'app/**'
       - '.github/workflows/deploy.yml'
@@ -21,25 +21,51 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          path: site-main
+
+      - name: Checkout redesign
+        uses: actions/checkout@v4
+        with:
+          ref: redesign
+          path: site-redesign
+
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: app/package-lock.json
-      - name: Install dependencies
-        working-directory: app
-        run: npm ci
-      - name: Build
-        working-directory: app
+
+      - name: Build main (site root)
+        working-directory: site-main/app
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
           VITE_BASE_PATH: /${{ github.event.repository.name }}/
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
+
+      - name: Build redesign (preview subpath)
+        working-directory: site-redesign/app
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          VITE_BASE_PATH: /${{ github.event.repository.name }}/preview/
+        run: |
+          npm ci
+          npm run build
+
+      - name: Combine into single site
+        run: |
+          mkdir -p site/preview
+          cp -r site-main/app/dist/. site/
+          cp -r site-redesign/app/dist/. site/preview/
+
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: app/dist
+          path: site
 
   deploy:
     needs: build
