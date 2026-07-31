@@ -73,7 +73,7 @@ export function CommodityDashboard() {
     queryKey: ['commodity_l1_list'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('commodity_l1')
         .eq('year', year)
         .order('commodity_l1');
@@ -88,7 +88,7 @@ export function CommodityDashboard() {
     queryFn: async () => {
       if (!selectedL1) return [];
       const { data, error } = await supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('commodity_l2')
         .eq('commodity_l1', selectedL1)
         .eq('year', year)
@@ -105,7 +105,7 @@ export function CommodityDashboard() {
     queryFn: async () => {
       if (!selectedL1) return [];
       let query = supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('year, total_value, total_volume')
         .eq('commodity_l1', selectedL1)
         .order('year', { ascending: true });
@@ -231,7 +231,7 @@ export function CommodityDashboard() {
       if (!selectedL1) return [];
       
       let query = supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('commodity_l2, total_value, total_volume')
         .eq('commodity_l1', selectedL1)
         .eq('year', year)

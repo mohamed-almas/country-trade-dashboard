@@ -646,7 +646,7 @@ export function GlobalDashboard() {
     queryKey: ['global_aggregates'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('global_aggregates')
+        .from('mv_global_aggregates')
         .select('*')
         .order('year', { ascending: true });
       if (error) throw error;
@@ -658,7 +658,7 @@ export function GlobalDashboard() {
     queryKey: ['top_exporters_pie', year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('top_trade_partners')
+        .from('mv_top_trade_partners')
         .select('*')
         .eq('year', year)
         .eq('role', 'exporter')
@@ -673,7 +673,7 @@ export function GlobalDashboard() {
     queryKey: ['top_importers_pie', year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('top_trade_partners')
+        .from('mv_top_trade_partners')
         .select('*')
         .eq('year', year)
         .eq('role', 'importer')
@@ -688,7 +688,7 @@ export function GlobalDashboard() {
     queryKey: ['regional_trade', year, metric],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('regional_trade')
+        .from('mv_regional_trade')
         .select('*')
         .eq('year', year)
         .order(metric === 'value' ? 'trade_value' : 'trade_volume', { ascending: false });
@@ -701,7 +701,7 @@ export function GlobalDashboard() {
     queryKey: ['commodity_hierarchy_view', year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('commodity_hierarchy_view')
+        .from('mv_commodity_aggregates')
         .select('commodity_l1, commodity_l2, total_value, total_volume')
         .eq('year', year)
         .order('total_value', { ascending: false });
@@ -715,19 +715,19 @@ export function GlobalDashboard() {
     queryKey: ['country_aggregates_geo', year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('country_aggregates_with_region')
-        .select('country, region, export_value, import_value, total_volume')
+        .from('mv_country_aggregates')
+        .select('country, region, export_value, export_volume, import_value, import_volume')
         .eq('year', year);
-      
+
       if (error) throw error;
-      
+
       return (data || []).map((item: any) => ({
         country: item.country,
         region: item.region || 'Other',
         // For value mode, use export_value (exports only) to avoid double counting
         total_value: Number(item.export_value) || 0,
         // For volume mode, use total_volume (which is exports + imports)
-        total_volume: Number(item.total_volume) || 0,
+        total_volume: (Number(item.export_volume) || 0) + (Number(item.import_volume) || 0),
         export_value: Number(item.export_value) || 0,
         import_value: Number(item.import_value) || 0,
         trade_balance: (Number(item.export_value) || 0) - (Number(item.import_value) || 0)
@@ -740,7 +740,7 @@ export function GlobalDashboard() {
     queryKey: ['global_corridors', year, metric],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('bilateral_aggregates')
+        .from('mv_bilateral_aggregates')
         .select('*')
         .eq('year', year)
         .order(metric === 'value' ? 'total_value' : 'total_volume', { ascending: false })
@@ -754,7 +754,7 @@ export function GlobalDashboard() {
     queryKey: ['global_corridors_history'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('bilateral_aggregates')
+        .from('mv_bilateral_aggregates')
         .select('exporter, importer, year, total_value, total_volume')
         .in('year', [2018, 2024]);
       if (error) throw error;

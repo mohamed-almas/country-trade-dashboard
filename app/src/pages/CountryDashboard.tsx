@@ -72,7 +72,7 @@ export function CountryDashboard() {
     queryKey: ['countries_list_static'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('countries_list')
+        .from('mv_countries_list')
         .select('country')
         .order('country');
       if (error) throw error;
@@ -87,7 +87,7 @@ export function CountryDashboard() {
     queryKey: ['country_export', selectedCountry],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('country_aggregates')
+        .from('mv_country_aggregates')
         .select('year, export_value, import_value')
         .eq('country', selectedCountry)
         .order('year', { ascending: true });
@@ -102,7 +102,7 @@ export function CountryDashboard() {
     queryKey: ['top_export_partners', selectedCountry, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('bilateral_aggregates')
+        .from('mv_bilateral_aggregates')
         .select('importer, total_value, total_volume')
         .eq('year', year)
         .eq('exporter', selectedCountry)
@@ -119,7 +119,7 @@ export function CountryDashboard() {
     queryKey: ['top_import_partners', selectedCountry, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('bilateral_aggregates')
+        .from('mv_bilateral_aggregates')
         .select('exporter, total_value, total_volume')
         .eq('year', year)
         .eq('importer', selectedCountry)
@@ -136,7 +136,7 @@ export function CountryDashboard() {
     queryKey: ['top_export_commodities', selectedCountry, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('commodity_l2, total_value, total_volume')
         .eq('year', year)
         .order('total_value', { ascending: false })
@@ -152,7 +152,7 @@ export function CountryDashboard() {
     queryKey: ['top_import_commodities', selectedCountry, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('commodity_aggregates')
+        .from('mv_commodity_aggregates')
         .select('commodity_l2, total_value, total_volume')
         .eq('year', year)
         .order('total_value', { ascending: false })

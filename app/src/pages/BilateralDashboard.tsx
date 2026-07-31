@@ -49,7 +49,7 @@ export function BilateralDashboard() {
     queryKey: ['countries_list'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('countries_list')
+        .from('mv_countries_list')
         .select('country')
         .order('country', { ascending: true });
       if (error) throw error;
@@ -68,7 +68,7 @@ export function BilateralDashboard() {
     queryFn: async () => {
       if (!exporter || !importer) return [] as BilateralRow[];
       const { data, error } = await supabase
-        .from('bilateral_aggregates')
+        .from('mv_bilateral_aggregates')
         .select('year, exporter, importer, total_value, total_volume')
         .eq('exporter', exporter)
         .eq('importer', importer)
@@ -85,7 +85,7 @@ export function BilateralDashboard() {
     queryFn: async () => {
       if (!exporter || !importer) return [];
       const { data, error } = await supabase
-        .from('bilateral_commodity_mv')
+        .from('mv_bilateral_commodity')
         .select('commodity_l2, total_value, total_volume')
         .eq('year', year)
         .eq('exporter', exporter)
