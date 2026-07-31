@@ -14,8 +14,9 @@ import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ComposedChart, Line,
 } from 'recharts';
-import { MapPin, TrendingUp, Sparkles, ChevronDown } from 'lucide-react';
+import { MapPin, TrendingUp, ChevronDown } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
+import { MarketIntelligence } from '../components/MarketIntelligence';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
 const tp = { color: 'var(--text-primary)' };
@@ -471,35 +472,19 @@ const importCommoditiesDonut = useMemo(() => {
             </ul>
           </div>
 
-          <div className="border p-5 md:p-6 flex flex-col" style={card}>
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={16} style={{ color: 'var(--accent)' }} />
-              <h2 className="text-base font-bold font-outfit" style={tp}>AI-Powered Market Insights</h2>
-              <span className="ml-auto text-xs font-semibold px-2 py-0.5" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)', opacity: 0.8 }}>
-                Coming Soon
-              </span>
-            </div>
-            <p className="text-sm mb-4" style={ts}>
-              Ask questions about {selectedRegion}'s trade dynamics, growth drivers, and market opportunities.
-            </p>
-            <textarea
-              placeholder={`e.g. "What are the top growth opportunities for ${selectedRegion} exports in 2025?"`}
-              className="flex-1 w-full p-3 text-sm outline-none border resize-none"
-              style={{
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--border)',
-                color: 'var(--text-primary)',
-                minHeight: 96,
-                opacity: 0.55,
-                cursor: 'not-allowed',
-              }}
-              disabled
-              rows={4}
-            />
-            <button disabled className="w-full py-2.5 mt-3 text-xs font-semibold opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }}>
-              Generate Insights
-            </button>
-          </div>
+          <MarketIntelligence
+            scopeKey={`region:${selectedRegion}`}
+            scopeLabel={`${selectedRegion} Trade`}
+            kpis={{
+              export_value: fmt(exportVal),
+              import_value: fmt(importVal),
+              export_yoy: `${exportYoy >= 0 ? '+' : ''}${exportYoy.toFixed(1)}%`,
+              export_cagr_2018_2024: `${cagrSign(exportCagr)}${exportCagr.toFixed(1)}%`,
+              trade_balance: fmt(Math.abs(exportVal - importVal)),
+              top_exporter: topExporterCountries[0]?.country ?? null,
+              top_export_commodity: topExpCommodity,
+            }}
+          />
         </div>
 
         {/* Trade Trend + Forecast */}

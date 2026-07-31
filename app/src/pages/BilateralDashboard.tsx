@@ -12,7 +12,8 @@ import { ForecastChart } from '../components/ForecastChart';
 import { generateAllForecasts } from '../utils/forecast';
 import { formatCurrency, formatVolume } from '../utils/formatters';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ArrowLeftRight, TrendingUp, ArrowRightLeft, Scale, Sparkles } from 'lucide-react';
+import { ArrowLeftRight, TrendingUp, ArrowRightLeft, Scale } from 'lucide-react';
+import { MarketIntelligence } from '../components/MarketIntelligence';
 import { getChartTheme } from '../utils/chartTheme';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -272,35 +273,17 @@ export function BilateralDashboard() {
             )}
           </div>
 
-          <div className="border p-5 md:p-6 flex flex-col" style={card}>
-            <div className="flex items-center gap-2 mb-3">
-              <Sparkles size={16} style={{ color: 'var(--accent)' }} />
-              <h2 className="text-base font-bold font-outfit" style={textPrimary}>AI-Powered Market Insights</h2>
-              <span className="ml-auto text-xs font-semibold px-2 py-0.5" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)', opacity: 0.8 }}>
-                Coming Soon
-              </span>
-            </div>
-            <p className="text-sm mb-4" style={textSecondary}>
-              Ask questions about {exporter} → {importer} trade dynamics, growth drivers, and market opportunities.
-            </p>
-            <textarea
-              placeholder={`e.g. "What are the top growth opportunities for ${exporter} exports to ${importer}?"`}
-              className="flex-1 w-full p-3 text-sm outline-none border resize-none"
-              style={{
-                backgroundColor: 'var(--input-bg)',
-                borderColor: 'var(--border)',
-                color: 'var(--text-primary)',
-                minHeight: 96,
-                opacity: 0.55,
-                cursor: 'not-allowed',
-              }}
-              disabled
-              rows={4}
-            />
-            <button disabled className="w-full py-2.5 mt-3 text-xs font-semibold opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }}>
-              Generate Insights
-            </button>
-          </div>
+          <MarketIntelligence
+            scopeKey={`corridor:${exporter}->${importer}`}
+            scopeLabel={`${exporter} → ${importer} Trade Corridor`}
+            kpis={{
+              trade_value: metric === 'value' ? formatCurrency(currentData?.value || 0) : formatVolume(currentData?.value || 0),
+              yoy_growth: `${yoyGrowth >= 0 ? '+' : ''}${yoyGrowth.toFixed(1)}%`,
+              cagr: `${cagr.toFixed(1)}%`,
+              top_commodity: topCommodity,
+              has_trade: !hasNoTrade,
+            }}
+          />
         </div>
 
         {/* Trade Trend + Forecast - Side by Side */}

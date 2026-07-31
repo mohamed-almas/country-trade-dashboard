@@ -14,7 +14,8 @@ import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ComposedChart, Line,
 } from 'recharts';
-import { TrendingUp, Sparkles, MapPin } from 'lucide-react';
+import { TrendingUp, MapPin } from 'lucide-react';
+import { MarketIntelligence } from '../components/MarketIntelligence';
 import { getChartTheme } from '../utils/chartTheme';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -316,12 +317,19 @@ export function CountryDashboard() {
               ))}
             </ul>
           </div>
-          <div className="border p-5 md:p-6 flex flex-col" style={card}>
-            <div className="flex items-center gap-2 mb-3"><Sparkles size={16} style={{ color: 'var(--accent)' }} /><h2 className="text-base font-bold font-outfit" style={tp}>AI-Powered Market Insights</h2><span className="ml-auto text-xs font-semibold px-2 py-0.5" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)', opacity: 0.8 }}>Coming Soon</span></div>
-            <p className="text-sm mb-4" style={ts}>Ask questions about {selectedCountry}'s trade dynamics.</p>
-            <textarea placeholder={`e.g. "What are the top growth opportunities for ${selectedCountry} exports?"`} className="flex-1 w-full p-3 text-sm outline-none border resize-none" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--border)', color: 'var(--text-primary)', minHeight: 96, opacity: 0.55, cursor: 'not-allowed' }} disabled rows={4} />
-            <button disabled className="w-full py-2.5 mt-3 text-xs font-semibold opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }}>Generate Insights</button>
-          </div>
+          <MarketIntelligence
+            scopeKey={`country:${selectedCountry}`}
+            scopeLabel={`${selectedCountry} Trade`}
+            kpis={{
+              export_value: fmt(exportVal),
+              import_value: fmt(importVal),
+              export_yoy: `${exportYoy >= 0 ? '+' : ''}${exportYoy.toFixed(1)}%`,
+              export_cagr_2018: `${cagrSign(exportCagr)}${exportCagr.toFixed(1)}%`,
+              top_export_destination: topExportPartners[0]?.importer ?? null,
+              top_import_origin: topImportPartners[0]?.exporter ?? null,
+              top_export_commodity: topExpCommodity,
+            }}
+          />
         </div>
 
         {/* Trade Trend + Forecast */}
