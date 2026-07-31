@@ -91,6 +91,13 @@
     font-family: 'DM Mono', monospace;
   }
 
+  /* Retroactively round every full-border card/panel across the app —
+     avoids touching every page that builds cards with className="border". */
+  .border {
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+
   ::-webkit-scrollbar {
     width: 6px;
     height: 6px;

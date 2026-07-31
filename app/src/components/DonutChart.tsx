@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer } from 'recharts';
-import ReactCountryFlag from 'react-country-flag';
 import { formatCompactNumber } from '../utils/formatters';
-import { getCountryISO } from '../utils/countryFlags';
+import { CountryLabel } from './CountryLabel';
 
 const COLORS = [
   '#3b82f6', '#f59e0b', '#10b981', '#ef4444', '#06b6d4',
@@ -10,26 +9,9 @@ const COLORS = [
 ];
 
 interface DonutChartProps {
-  data: Array<{ name: string; value: number }>;
+  data: Array<{ name: string; value: number; shortName?: string; flag?: string | null }>;
   isDark: boolean;
   metric: 'value' | 'volume';
-}
-
-function CountryLabel({ name }: { name: string }) {
-  const iso = getCountryISO(name);
-  return (
-    <span className="flex items-center gap-1.5 min-w-0">
-      {iso && (
-        <ReactCountryFlag
-          countryCode={iso}
-          svg
-          style={{ width: '1em', height: '0.75em', flexShrink: 0 }}
-          title={name}
-        />
-      )}
-      <span className="truncate">{name}</span>
-    </span>
-  );
 }
 
 export function DonutChart({ data, isDark, metric }: DonutChartProps) {
@@ -110,7 +92,7 @@ export function DonutChart({ data, isDark, metric }: DonutChartProps) {
               style={{ backgroundColor: COLORS[i % COLORS.length] }}
             />
             <span className="text-xs text-gray-600 dark:text-gray-400 flex-1 min-w-0" title={item.name}>
-              <CountryLabel name={item.name} />
+              <CountryLabel name={item.name} shortName={item.shortName} flag={item.flag} />
             </span>
             <span className="text-xs text-gray-400 dark:text-gray-500 ml-auto flex-shrink-0">
               {((item.value / total) * 100).toFixed(1)}%

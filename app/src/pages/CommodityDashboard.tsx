@@ -14,10 +14,10 @@ import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ComposedChart, Line,
 } from 'recharts';
-import { Package, TrendingUp, Sparkles } from 'lucide-react';
+import { Package, TrendingUp } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
-import { getCountryISO } from '../utils/countryFlags';
-import ReactCountryFlag from 'react-country-flag';
+import { CountryLabel } from '../components/CountryLabel';
+import { MarketIntelligence } from '../components/MarketIntelligence';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
 const tp = { color: 'var(--text-primary)' };
@@ -34,20 +34,7 @@ function SectionHeader({ title, action }: { title: string; action?: React.ReactN
 }
 
 function CorridorCountryCell({ name }: { name: string }) {
-  const iso = getCountryISO(name);
-  return (
-    <span className="flex items-center gap-1.5">
-      {iso && (
-        <ReactCountryFlag
-          countryCode={iso}
-          svg
-          style={{ width: '1.1em', height: '0.85em', flexShrink: 0 }}
-          title={name}
-        />
-      )}
-      <span className="truncate">{name}</span>
-    </span>
-  );
+  return <CountryLabel name={name} size={18} />;
 }
 
 export function CommodityDashboard() {
@@ -411,12 +398,17 @@ export function CommodityDashboard() {
               ))}
             </ul>
           </div>
-          <div className="border p-5 md:p-6 flex flex-col" style={card}>
-            <div className="flex items-center gap-2 mb-3"><Sparkles size={16} style={{ color: 'var(--accent)' }} /><h2 className="text-base font-bold font-outfit" style={tp}>AI-Powered Market Insights</h2><span className="ml-auto text-xs font-semibold px-2 py-0.5" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)', opacity: 0.8 }}>Coming Soon</span></div>
-            <p className="text-sm mb-4" style={ts}>Ask questions about {displayLabel} trade dynamics.</p>
-            <textarea placeholder={`e.g. "What factors are driving ${displayLabel} prices?"`} className="flex-1 w-full p-3 text-sm outline-none border resize-none" style={{ backgroundColor: 'var(--input-bg)', borderColor: 'var(--border)', color: 'var(--text-primary)', minHeight: 96, opacity: 0.55, cursor: 'not-allowed' }} disabled rows={4} />
-            <button disabled className="w-full py-2.5 mt-3 text-xs font-semibold opacity-40 cursor-not-allowed" style={{ backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }}>Generate Insights</button>
-          </div>
+          <MarketIntelligence
+            scopeKey={`commodity:${selectedL2 !== 'All' ? selectedL2 : selectedL1}`}
+            scopeLabel={displayLabel}
+            kpis={{
+              total_value: fmt(currentValue),
+              yoy_growth: `${currentYoY >= 0 ? '+' : ''}${currentYoY.toFixed(1)}%`,
+              cagr_since_2018: `${cagrSign(cagr)}${cagr.toFixed(1)}%`,
+              top_exporters: topExportCountries.slice(0, 3).map((c) => c.country),
+              top_importers: topImportCountries.slice(0, 3).map((c) => c.country),
+            }}
+          />
         </div>
 
         {/* Trade Trend + Forecast */}

@@ -13,14 +13,15 @@ import { GeographicTreemap } from '../components/GeographicTreemap';
 import { generateAllForecasts, ForecastMethod } from '../utils/forecast';
 import { formatCurrency, formatVolume } from '../utils/formatters';
 import { getChartTheme } from '../utils/chartTheme';
-import { getCountryISO } from '../utils/countryFlags';
-import ReactCountryFlag from 'react-country-flag';
+import { CountryLabel } from '../components/CountryLabel';
+import { WorldMap } from '../components/WorldMap';
+import { MarketIntelligence } from '../components/MarketIntelligence';
 import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ComposedChart, Line, PieChart, Pie, Cell,
   Area, ReferenceLine,
 } from 'recharts';
-import { TrendingUp, Globe, Package, Send, ArrowRight } from 'lucide-react';
+import { TrendingUp, Globe, Package } from 'lucide-react';
 import { formatCompactNumber } from '../utils/formatters';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -68,7 +69,7 @@ function fmtAxis(v: number, metric: 'value' | 'volume') {
   return `${(v / 1e3).toFixed(0)}K t`;
 }
 
-interface PieSlice { name: string; value: number; pct: number }
+interface PieSlice { name: string; value: number; pct: number; shortName?: string; flag?: string | null }
 
 function TradePieChart({
   data,
@@ -123,31 +124,20 @@ function TradePieChart({
         </PieChart>
       </ResponsiveContainer>
       <div className="mt-3 space-y-1.5">
-        {data.map((item, i) => {
-          const iso = getCountryISO(item.name);
-          return (
-            <div key={i} className="flex items-center gap-1.5 min-w-0">
-              <span
-                className="flex-shrink-0 w-2.5 h-2.5 rounded-sm"
-                style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
-              />
-              <span className="text-xs flex-1 min-w-0 flex items-center gap-1 truncate" style={{ color: 'var(--text-secondary)' }}>
-                {iso && (
-                  <ReactCountryFlag
-                    countryCode={iso}
-                    svg
-                    style={{ width: '1em', height: '0.75em', flexShrink: 0 }}
-                    title={item.name}
-                  />
-                )}
-                <span className="truncate">{item.name}</span>
-              </span>
-              <span className="text-xs flex-shrink-0 tabular-nums" style={{ color: 'var(--text-muted)' }}>
-                {item.pct.toFixed(1)}%
-              </span>
-            </div>
-          );
-        })}
+        {data.map((item, i) => (
+          <div key={i} className="flex items-center gap-1.5 min-w-0">
+            <span
+              className="flex-shrink-0 w-2.5 h-2.5 rounded-sm"
+              style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }}
+            />
+            <span className="text-xs flex-1 min-w-0 truncate" style={{ color: 'var(--text-secondary)' }}>
+              <CountryLabel name={item.name} shortName={item.shortName} flag={item.flag} />
+            </span>
+            <span className="text-xs flex-shrink-0 tabular-nums" style={{ color: 'var(--text-muted)' }}>
+              {item.pct.toFixed(1)}%
+            </span>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -376,133 +366,8 @@ function CompactForecastChart({
 
 const GLOBAL_TOTAL_2024 = 22_859_231_618_696;
 
-function NarrativeSection({ 
-  globalData, 
-  topExporters, 
-  topCommodities, 
-  metric, 
-  isDark 
-}: { 
-  globalData: any[]; 
-  topExporters: any[]; 
-  topCommodities: any[]; 
-  metric: 'value' | 'volume';
-  isDark: boolean;
-}) {
-  const [question, setQuestion] = useState('');
-  const [answer, setAnswer] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  const generateInsights = () => {
-    const currentYear = globalData?.find(d => d.year === 2024);
-    const prevYear = globalData?.find(d => d.year === 2023);
-    
-    const currentValue = metric === 'value' ? currentYear?.total_value : currentYear?.total_volume;
-    const prevValue = metric === 'value' ? prevYear?.total_value : prevYear?.total_volume;
-    const yoyGrowth = prevValue ? ((currentValue - prevValue) / prevValue * 100) : 0;
-    
-    const topExporter = topExporters?.[0];
-    const topCommodity = topCommodities?.[0];
-    
-    return [
-      `Global ${metric === 'value' ? 'trade value' : 'trade volume'} reached ${fmtVal(currentValue, metric)} in 2024, ${yoyGrowth >= 0 ? 'up' : 'down'} ${Math.abs(yoyGrowth).toFixed(1)}% year-on-year.`,
-      `${topExporter?.country || 'China'} remains the top exporter with ${fmtVal(topExporter?.total_value || 0, metric)} in 2024.`,
-      `${topCommodity?.commodity_l2 || 'Manufactured goods'} dominates trade flows, representing a significant share of global ${metric === 'value' ? 'value' : 'volume'}.`,
-      `Asia-Pacific is the world's largest trade region, driven by dense intra-regional supply chains.`,
-      `Global trade patterns continue to evolve with shifting supply chains and changing demand dynamics.`,
-    ];
-  };
-
-  const insights = generateInsights();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim()) return;
-    setLoading(true);
-    await new Promise(r => setTimeout(r, 800));
-    setAnswer(`AI-powered insights are coming soon. Your question "${question}" has been noted. Connect an LLM endpoint to enable live market analysis.`);
-    setLoading(false);
-  };
-
-  return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
-      <div className="border p-4 md:p-5" style={card}>
-        <h2 className="text-sm font-semibold mb-4 font-outfit" style={textPrimary}>Executive Insights</h2>
-        <ul className="space-y-3">
-          {insights.map((insight, i) => (
-            <li key={i} className="flex gap-2.5">
-              <ArrowRight
-                className="w-3.5 h-3.5 flex-shrink-0 mt-0.5"
-                style={{ color: 'var(--accent)' }}
-              />
-              <span className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-                {insight}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="border p-4 md:p-5" style={card}>
-        <h2 className="text-sm font-semibold mb-1 font-outfit" style={textPrimary}>AI-Powered Market Insights <span className="font-normal text-xs" style={{ color: 'var(--text-muted)' }}>(coming soon)</span></h2>
-        <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
-          Ask questions about trade trends, forecasts, or market dynamics.
-        </p>
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <textarea
-            value={question}
-            onChange={e => setQuestion(e.target.value)}
-            rows={4}
-            placeholder="Ask about trade trends, forecasts, or market insights..."
-            className="w-full resize-none rounded border px-3 py-2 text-sm focus:outline-none focus:ring-2 transition-all"
-            style={{
-              backgroundColor: 'var(--bg-primary)',
-              borderColor: 'var(--border)',
-              color: 'var(--text-primary)',
-            }}
-          />
-          <button
-            type="submit"
-            disabled={loading || !question.trim()}
-            className="flex items-center gap-2 px-4 py-2 rounded text-sm font-medium transition-all disabled:opacity-50"
-            style={{ backgroundColor: 'var(--accent)', color: '#ffffff' }}
-          >
-            <Send className="w-3.5 h-3.5" />
-            {loading ? 'Analyzing...' : 'Ask'}
-          </button>
-        </form>
-        {answer && (
-          <div
-            className="mt-4 p-3 rounded border text-sm leading-relaxed"
-            style={{
-              backgroundColor: 'var(--bg-primary)',
-              borderColor: 'var(--border)',
-              color: 'var(--text-secondary)',
-            }}
-          >
-            {answer}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function CorridorCountryCell({ name }: { name: string }) {
-  const iso = getCountryISO(name);
-  return (
-    <span className="flex items-center gap-1.5">
-      {iso && (
-        <ReactCountryFlag
-          countryCode={iso}
-          svg
-          style={{ width: '1.1em', height: '0.85em', flexShrink: 0 }}
-          title={name}
-        />
-      )}
-      <span className="truncate">{name}</span>
-    </span>
-  );
+function CorridorCountryCell({ name, shortName, flag }: { name: string; shortName?: string | null; flag?: string | null }) {
+  return <CountryLabel name={name} shortName={shortName} flag={flag} size={18} />;
 }
 
 function CorridorCAGRBadge({ cagr }: { cagr: number | null }) {
@@ -558,7 +423,11 @@ function TradeCorridorsTable({
       return {
         rank: i + 1,
         exporter: c.exporter,
+        exporterShort: c.exporter_short,
+        exporterFlag: c.exporter_flag,
         importer: c.importer,
+        importerShort: c.importer_short,
+        importerFlag: c.importer_flag,
         value: val,
         share: total > 0 ? (val / total) * 100 : 0,
         cagr: cagrMap.has(key) ? cagrMap.get(key)! : null,
@@ -613,10 +482,10 @@ function TradeCorridorsTable({
                   {row.rank}
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
-                  <CorridorCountryCell name={row.exporter} />
+                  <CorridorCountryCell name={row.exporter} shortName={row.exporterShort} flag={row.exporterFlag} />
                 </td>
                 <td className="px-4 py-3 whitespace-nowrap" style={{ color: 'var(--text-primary)' }}>
-                  <CorridorCountryCell name={row.importer} />
+                  <CorridorCountryCell name={row.importer} shortName={row.importerShort} flag={row.importerFlag} />
                 </td>
                 <td className="px-4 py-3 text-right font-medium tabular-nums" style={{ color: 'var(--text-primary)' }}>
                   {formatCompactNumber(row.value)}
@@ -716,13 +585,14 @@ export function GlobalDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('mv_country_aggregates')
-        .select('country, region, export_value, export_volume, import_value, import_volume')
+        .select('country, num_code, region, export_value, export_volume, import_value, import_volume')
         .eq('year', year);
 
       if (error) throw error;
 
       return (data || []).map((item: any) => ({
         country: item.country,
+        num_code: item.num_code,
         region: item.region || 'Other',
         // For value mode, use export_value (exports only) to avoid double counting
         total_value: Number(item.export_value) || 0,
@@ -831,7 +701,7 @@ export function GlobalDashboard() {
     const othersVal = globalTotal - top10Sum;
     const result: PieSlice[] = top10.map(p => {
       const v = metric === 'value' ? p.total_value : p.total_volume;
-      return { name: p.country, value: v, pct: (v / globalTotal) * 100 };
+      return { name: p.country, shortName: p.country_short, flag: p.flag, value: v, pct: (v / globalTotal) * 100 };
     });
     if (othersVal > 0) {
       result.push({ name: 'Others', value: othersVal, pct: (othersVal / globalTotal) * 100 });
@@ -847,7 +717,7 @@ export function GlobalDashboard() {
     const othersVal = globalTotal - top10Sum;
     const result: PieSlice[] = top10.map(p => {
       const v = metric === 'value' ? p.total_value : p.total_volume;
-      return { name: p.country, value: v, pct: (v / globalTotal) * 100 };
+      return { name: p.country, shortName: p.country_short, flag: p.flag, value: v, pct: (v / globalTotal) * 100 };
     });
     if (othersVal > 0) {
       result.push({ name: 'Others', value: othersVal, pct: (othersVal / globalTotal) * 100 });
@@ -977,13 +847,17 @@ export function GlobalDashboard() {
           />
         </div>
 
-        {/* Narrative: Insights + AI Prompt */}
-        <NarrativeSection 
-          globalData={globalData}
-          topExporters={topExporterPartners}
-          topCommodities={commodityData}
-          metric={metric}
-          isDark={isDark}
+        <MarketIntelligence
+          scopeKey="global"
+          scopeLabel="Global Trade"
+          kpis={{
+            total_value_2024: currentYearData ? formatCurrency(currentYearData.total_value) : null,
+            total_volume_2024: currentYearData ? formatVolume(currentYearData.total_volume) : null,
+            value_yoy: `${valueYoY >= 0 ? '+' : ''}${valueYoY.toFixed(1)}%`,
+            value_cagr_2018_2024: `${valueCagr >= 0 ? '+' : ''}${valueCagr.toFixed(1)}%`,
+            top_exporter: topExporterPartners?.[0]?.country ?? null,
+            top_commodity: topCommodityL2?.commodity_l2 ?? null,
+          }}
         />
 
         {/* Trend + Forecast */}
@@ -1085,6 +959,21 @@ export function GlobalDashboard() {
         {/* Geography Section: Geo Treemap (left) + Sankey (right) */}
         <div>
           <h2 className="text-base font-semibold mb-4 font-outfit" style={textPrimary}>Geographic Distribution</h2>
+          <div className="border p-4 md:p-5 mb-4 md:mb-6" style={card}>
+            <h3 className="text-sm font-semibold mb-4 font-outfit" style={textPrimary}>
+              Trade Value by Country ({year})
+            </h3>
+            <WorldMap
+              data={(countryAggregates || [])
+                .filter((c) => c.num_code)
+                .map((c) => ({
+                  numCode: c.num_code,
+                  value: metric === 'value' ? c.total_value : c.total_volume,
+                  label: c.country,
+                }))}
+              formatValue={(v) => fmtVal(v, metric)}
+            />
+          </div>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
             <div className="border p-4 md:p-5" style={card}>
               <h3 className="text-sm font-semibold mb-4 font-outfit" style={textPrimary}>Geographic Hierarchy (Region → Country)</h3>
