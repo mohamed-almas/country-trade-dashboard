@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root,
+[data-theme="dark"] {
+  --bg-primary: #070F1E;
+  --bg-secondary: #0D1829;
+  --bg-tertiary: #121F33;
+  --bg-elevated: #1E2D45;
+  --border: #1E2D45;
+  --text-primary: #F0F4F8;
+  --text-secondary: #8BA0B8;
+  --text-muted: #4A6280;
+  --accent: #CC274C;
+  --accent-text: #F0F4F8;
+  --chart-bar: #2E8B8B;
+  --chart-line: #CC274C;
+  --positive-bg: #0D2A1A;
+  --positive-text: #4ADE80;
+  --negative-bg: #2A0D0D;
+  --negative-text: #F87171;
+  --neutral-badge-bg: #1E2D45;
+  --medium-badge-bg: #2A1F0D;
+  --medium-badge-text: #FCD34D;
+  --tooltip-bg: #0D1829;
+  --table-row-alt: #070F1E;
+  --input-bg: #070F1E;
+  --scrollbar-track: #0D1829;
+  --scrollbar-thumb: #1E2D45;
+}
+
+[data-theme="light"] {
+  --bg-primary: #F4F6F9;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #E8EDF3;
+  --bg-elevated: #D6DDE8;
+  --border: #C8D3E0;
+  --text-primary: #0F1E33;
+  --text-secondary: #4A6280;
+  --text-muted: #8BA0B8;
+  --accent: #CC274C;
+  --accent-text: #FFFFFF;
+  --chart-bar: #1A7070;
+  --chart-line: #CC274C;
+  --positive-bg: #DCFCE7;
+  --positive-text: #15803D;
+  --negative-bg: #FEE2E2;
+  --negative-text: #B91C1C;
+  --neutral-badge-bg: #E8EDF3;
+  --medium-badge-bg: #FEF9C3;
+  --medium-badge-text: #92400E;
+  --tooltip-bg: #FFFFFF;
+  --table-row-alt: #F4F6F9;
+  --input-bg: #F4F6F9;
+  --scrollbar-track: #F4F6F9;
+  --scrollbar-thumb: #C8D3E0;
+}
+
+@layer base {
+  body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: 'DM Sans', sans-serif;
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  .font-outfit {
+    font-family: 'Outfit', sans-serif;
+  }
+
+  .font-dm-sans {
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  .font-dm-mono {
+    font-family: 'DM Mono', monospace;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb);
+  }
+}
+
+* {
+  border-radius: 0 !important;
+}

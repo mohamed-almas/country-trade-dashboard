@@ -1,0 +1,21 @@
+# Raw source data (already loaded into Supabase; not needed in the repo)
+Data/
+ml_baci_geo.csv
+
+# Legacy Bolt-hosted dashboard (kept locally until decommissioned)
+project-bolt-sb1-jmuiwwtm/
+
+# Node
+node_modules/
+dist/
+
+# Env / secrets
+.env
+.env.local
+
+# Loader logs
+loader/backfill.log
+
+# OS
+.DS_Store
+Thumbs.db
