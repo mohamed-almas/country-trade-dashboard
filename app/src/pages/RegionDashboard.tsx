@@ -71,7 +71,7 @@ export function RegionDashboard() {
     queryKey: ['available_regions'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('regional_trade')
+        .from('mv_regional_trade')
         .select('exporter_region')
         .eq('year', 2024)
         .order('exporter_region');
@@ -86,7 +86,7 @@ export function RegionDashboard() {
     queryKey: ['regional_trade_all', selectedRegion],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('regional_trade')
+        .from('mv_regional_trade')
         .select('*')
         .or(`exporter_region.eq.${selectedRegion},importer_region.eq.${selectedRegion}`)
         .order('year');
@@ -101,7 +101,7 @@ export function RegionDashboard() {
     queryKey: ['region_top_exporters', selectedRegion, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('region_top_exporters')
+        .from('mv_region_top_exporters')
         .select('country, total_value, total_volume')
         .eq('region', selectedRegion)
         .eq('year', year)
@@ -118,7 +118,7 @@ export function RegionDashboard() {
     queryKey: ['region_top_importers', selectedRegion, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('region_top_importers')
+        .from('mv_region_top_importers')
         .select('country, total_value, total_volume')
         .eq('region', selectedRegion)
         .eq('year', year)
@@ -135,7 +135,7 @@ export function RegionDashboard() {
     queryKey: ['top_export_commodities', selectedRegion, year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('region_commodity_export_mv')
+        .from('mv_region_commodity_export')
         .select('commodity_l2, total_value, total_volume')
         .eq('region', selectedRegion)
         .eq('year', year)
@@ -155,7 +155,7 @@ const { data: topImportCommodities = [], isLoading: importCommoditiesLoading } =
   queryKey: ['top_import_commodities', selectedRegion, year],
   queryFn: async () => {
     const { data, error } = await supabase
-      .from('region_commodity_import_mv')
+      .from('mv_region_commodity_import')
       .select('commodity_l2, total_value, total_volume')
       .eq('region', selectedRegion)
       .eq('year', year)
@@ -175,7 +175,7 @@ const { data: topExportCommodityCard = [] } = useQuery({
   queryKey: ['top_export_commodity_card', selectedRegion, year],
   queryFn: async () => {
     const { data, error } = await supabase
-      .from('region_commodity_export_mv')
+      .from('mv_region_commodity_export')
       .select('commodity_l2, total_value')
       .eq('region', selectedRegion)
       .eq('year', year)
@@ -192,7 +192,7 @@ const { data: topImportCommodityCard = [] } = useQuery({
   queryKey: ['top_import_commodity_card', selectedRegion, year],
   queryFn: async () => {
     const { data, error } = await supabase
-      .from('region_commodity_import_mv')
+      .from('mv_region_commodity_import')
       .select('commodity_l2, total_value')
       .eq('region', selectedRegion)
       .eq('year', year)

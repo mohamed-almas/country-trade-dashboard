@@ -39,7 +39,7 @@ export function DollarPerTonDashboard() {
     queryKey: ['price_per_ton', year],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('price_per_ton_analysis')
+        .from('mv_commodity_aggregates')
         .select('*')
         .eq('year', year)
         .order('price_per_ton', { ascending: false });
@@ -53,7 +53,7 @@ export function DollarPerTonDashboard() {
     queryKey: ['price_history'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('price_per_ton_analysis')
+        .from('mv_commodity_aggregates')
         .select('*')
         .order('year', { ascending: true });
       if (error) throw error;
