@@ -6,7 +6,7 @@ interface PageShellProps {
 
 export function PageShell({ children }: PageShellProps) {
   return (
-    <div className="min-h-screen pt-14" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen pt-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-8">
         {children}
       </div>
@@ -24,7 +24,12 @@ export function Card({ children, className = '', padding = true }: CardProps) {
   return (
     <div
       className={`border ${padding ? 'p-5' : ''} ${className}`}
-      style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+      style={{
+        backgroundColor: 'var(--bg-secondary)',
+        borderColor: 'var(--border)',
+        borderRadius: 'var(--radius)',
+        boxShadow: 'var(--shadow-sm)',
+      }}
     >
       {children}
     </div>

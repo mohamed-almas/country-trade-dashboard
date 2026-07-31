@@ -42,6 +42,7 @@ async function main() {
       income_group: r['Income group (WB)'],
       lat: toNum(r['Lat']),
       long: toNum(r['Long']),
+      flag_data_uri: r['Flag'] || null,
     }))
     .filter((r) => r.num_code !== null && r.country);
 
