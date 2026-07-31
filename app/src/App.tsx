@@ -17,7 +17,7 @@ import { ReferencesNewPage } from './pages/ReferencesNewPage';
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
+      <BrowserRouter basename={import.meta.env.BASE_URL}>
         <ThemeProvider>
           <MetricProvider>
             <YearProvider>
