@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from './lib/queryClient';
-import { Nav } from './components/Nav';
+import { Sidebar } from './components/Sidebar';
 import { ThemeProvider } from './lib/ThemeContext';
 import { MetricProvider } from './lib/MetricContext';
 import { YearProvider } from './lib/YearContext';
@@ -21,17 +21,21 @@ function App() {
         <ThemeProvider>
           <MetricProvider>
             <YearProvider>
-              <Nav />
-              <Routes>
-                <Route path="/" element={<GlobalDashboard />} />
-                <Route path="/region" element={<RegionDashboard />} />
-                <Route path="/country" element={<CountryPage />} />
-                <Route path="/commodity" element={<CommodityDashboard />} />
-                <Route path="/bilateral" element={<BilateralDashboard />} />
-                <Route path="/dollar-per-ton" element={<DollarPerTonDashboard />} />
-                <Route path="/news" element={<TradeNewsPage />} />
-                <Route path="/references" element={<ReferencesNewPage />} />
-              </Routes>
+              <div className="flex" style={{ backgroundColor: 'var(--bg-primary)' }}>
+                <Sidebar />
+                <div className="flex-1 min-w-0">
+                  <Routes>
+                    <Route path="/" element={<GlobalDashboard />} />
+                    <Route path="/region" element={<RegionDashboard />} />
+                    <Route path="/country" element={<CountryPage />} />
+                    <Route path="/commodity" element={<CommodityDashboard />} />
+                    <Route path="/bilateral" element={<BilateralDashboard />} />
+                    <Route path="/dollar-per-ton" element={<DollarPerTonDashboard />} />
+                    <Route path="/news" element={<TradeNewsPage />} />
+                    <Route path="/references" element={<ReferencesNewPage />} />
+                  </Routes>
+                </div>
+              </div>
             </YearProvider>
           </MetricProvider>
         </ThemeProvider>

@@ -16,6 +16,7 @@ import {
 } from 'recharts';
 import { TrendingUp, MapPin } from 'lucide-react';
 import { MarketIntelligence } from '../components/MarketIntelligence';
+import { WorldMap } from '../components/WorldMap';
 import { getChartTheme } from '../utils/chartTheme';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -89,7 +90,7 @@ export function CountryDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('mv_country_aggregates')
-        .select('year, export_value, import_value')
+        .select('year, export_value, import_value, num_code')
         .eq('country', selectedCountry)
         .order('year', { ascending: true });
       if (error) throw error;
@@ -104,7 +105,7 @@ export function CountryDashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('mv_bilateral_aggregates')
-        .select('importer, total_value, total_volume')
+        .select('importer, importer_num_code, total_value, total_volume')
         .eq('year', year)
         .eq('exporter', selectedCountry)
         .order('total_value', { ascending: false })
@@ -256,7 +257,7 @@ export function CountryDashboard() {
   if (exportLoading) return <LoadingState />;
 
   return (
-    <div className="min-h-screen pt-14" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-8 space-y-6">
 
         <div className="flex items-center gap-3">
@@ -329,6 +330,25 @@ export function CountryDashboard() {
               top_import_origin: topImportPartners[0]?.exporter ?? null,
               top_export_commodity: topExpCommodity,
             }}
+          />
+        </div>
+
+        <div className="border p-4 md:p-5" style={card}>
+          <SectionHeader title={`${selectedCountry} — Top Export Partners by Value (${year})`} />
+          <WorldMap
+            data={[
+              ...(exportData?.[exportData.length - 1]?.num_code
+                ? [{ numCode: exportData[exportData.length - 1].num_code as number, value: exportVal, label: selectedCountry }]
+                : []),
+              ...topExportPartners
+                .filter((p: any) => p.importer_num_code)
+                .map((p: any) => ({
+                  numCode: p.importer_num_code as number,
+                  value: metric === 'value' ? p.total_value : p.total_volume,
+                  label: p.importer,
+                })),
+            ]}
+            formatValue={(v) => fmt(v)}
           />
         </div>
 

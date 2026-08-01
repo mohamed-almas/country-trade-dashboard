@@ -4,37 +4,55 @@
 
 :root,
 [data-theme="light"] {
-  --bg-primary: #EEF1F5;
+  --bg-primary: #F2F4F5;
   --bg-secondary: #FFFFFF;
-  --bg-tertiary: #E4E9F0;
-  --bg-elevated: #F8FAFC;
-  --border: #DCE3EC;
-  --text-primary: #0F172A;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
-  --accent: #00808B;
-  --accent-2: #4156C8;
+  --bg-tertiary: #E9EDEF;
+  --bg-elevated: #FCFCFB;
+  --border: #E2E7EA;
+  --text-primary: #101828;
+  --text-secondary: #475467;
+  --text-muted: #98A2B3;
+  --accent: #0E6E78;
+  --accent-2: #4A3AA7;
   --accent-text: #FFFFFF;
-  --chart-bar: #00808B;
-  --chart-line: #4156C8;
-  --positive-bg: #DCFCE7;
-  --positive-text: #15803D;
-  --negative-bg: #FEE2E2;
-  --negative-text: #B91C1C;
-  --warning-bg: #FEF3C7;
-  --warning-text: #92400E;
-  --neutral-badge-bg: #E4E9F0;
-  --medium-badge-bg: #FEF3C7;
-  --medium-badge-text: #92400E;
+  --chart-bar: #0E6E78;
+  --chart-line: #4A3AA7;
+  --positive-bg: #E6F6EE;
+  --positive-text: #1BAF7A;
+  --negative-bg: #FBEAE3;
+  --negative-text: #C9622A;
+  --warning-bg: #FCF3E0;
+  --warning-text: #C98500;
+  --neutral-badge-bg: #E9EDEF;
+  --medium-badge-bg: #FCF3E0;
+  --medium-badge-text: #C98500;
   --tooltip-bg: #FFFFFF;
-  --table-row-alt: #F8FAFC;
+  --table-row-alt: #FAFBFB;
   --input-bg: #FFFFFF;
-  --scrollbar-track: #EEF1F5;
-  --scrollbar-thumb: #C8D3E0;
-  --shadow-sm: 0 1px 2px 0 rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 4px 12px -2px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+  --scrollbar-track: #F2F4F5;
+  --scrollbar-thumb: #C7D0D4;
+  --shadow-sm: 0 1px 2px 0 rgba(16, 24, 40, 0.05);
+  --shadow-md: 0 4px 12px -2px rgba(16, 24, 40, 0.08), 0 2px 4px -2px rgba(16, 24, 40, 0.04);
   --radius: 12px;
   --radius-sm: 8px;
+
+  /* Sidebar shell — stays dark navy in both themes, like the reference site */
+  --sidebar-bg: #0B2230;
+  --sidebar-bg-elevated: #12303F;
+  --sidebar-border: #1B3A4B;
+  --sidebar-text: #C7D8DE;
+  --sidebar-text-muted: #6F8A96;
+  --sidebar-active-bg: #0E6E78;
+  --sidebar-active-text: #FFFFFF;
+
+  /* Market Intelligence category tags */
+  --tag-trend: #0E6E78;
+  --tag-geopolitical: #C9622A;
+  --tag-risk: #C15A86;
+  --tag-opportunity: #1BAF7A;
+  --tag-policy: #C98500;
+  --tag-demand: #3A6B3A;
+  --tag-supply: #4A3AA7;
 }
 
 [data-theme="dark"] {
@@ -46,15 +64,15 @@
   --text-primary: #F1F5F9;
   --text-secondary: #94A3B8;
   --text-muted: #64748B;
-  --accent: #00C2CB;
-  --accent-2: #6C7FE0;
+  --accent: #14B8AA;
+  --accent-2: #8B7CF6;
   --accent-text: #06141F;
-  --chart-bar: #00C2CB;
-  --chart-line: #8B9CF0;
+  --chart-bar: #14B8AA;
+  --chart-line: #A78BFA;
   --positive-bg: #0D2A1A;
   --positive-text: #4ADE80;
-  --negative-bg: #2A0D0D;
-  --negative-text: #F87171;
+  --negative-bg: #2A1710;
+  --negative-text: #F0946A;
   --warning-bg: #2A1F0D;
   --warning-text: #FCD34D;
   --neutral-badge-bg: #1E2A42;
@@ -69,6 +87,22 @@
   --shadow-md: 0 4px 16px -2px rgba(0, 0, 0, 0.45);
   --radius: 12px;
   --radius-sm: 8px;
+
+  --sidebar-bg: #060F16;
+  --sidebar-bg-elevated: #0B1B24;
+  --sidebar-border: #16303D;
+  --sidebar-text: #A9C0C8;
+  --sidebar-text-muted: #5D7883;
+  --sidebar-active-bg: #14B8AA;
+  --sidebar-active-text: #06141F;
+
+  --tag-trend: #14B8AA;
+  --tag-geopolitical: #E08A55;
+  --tag-risk: #D989AC;
+  --tag-opportunity: #4ADE80;
+  --tag-policy: #E0AC3C;
+  --tag-demand: #7FB77F;
+  --tag-supply: #A78BFA;
 }
 
 @layer base {

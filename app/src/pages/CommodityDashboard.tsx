@@ -18,6 +18,7 @@ import { Package, TrendingUp } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
 import { CountryLabel } from '../components/CountryLabel';
 import { MarketIntelligence } from '../components/MarketIntelligence';
+import { WorldMap } from '../components/WorldMap';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
 const tp = { color: 'var(--text-primary)' };
@@ -131,22 +132,22 @@ export function CommodityDashboard() {
       
       const { data, error } = await supabase
         .from(table)
-        .select('exporter, total_value, total_volume')
+        .select('exporter, exporter_num_code, total_value, total_volume')
         .eq('year', year)
         .eq(filterField, filterValue);
-      
+
       if (error) throw error;
-      
+
       const exporterMap = new Map();
       data?.forEach(d => {
-        const existing = exporterMap.get(d.exporter) || { total_value: 0, total_volume: 0 };
+        const existing = exporterMap.get(d.exporter) || { total_value: 0, total_volume: 0, num_code: d.exporter_num_code };
         existing.total_value += d.total_value;
         existing.total_volume += d.total_volume;
         exporterMap.set(d.exporter, existing);
       });
-      
+
       return Array.from(exporterMap.entries())
-        .map(([country, vals]) => ({ country, total_value: vals.total_value, total_volume: vals.total_volume }))
+        .map(([country, vals]) => ({ country, num_code: vals.num_code, total_value: vals.total_value, total_volume: vals.total_volume }))
         .sort((a, b) => b.total_value - a.total_value)
         .slice(0, 10);
     },
@@ -325,7 +326,7 @@ export function CommodityDashboard() {
   if (l1Loading || historyLoading) return <LoadingState />;
 
   return (
-    <div className="min-h-screen pt-14" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-8 space-y-6">
 
         <div className="flex items-center gap-3">
@@ -408,6 +409,20 @@ export function CommodityDashboard() {
               top_exporters: topExportCountries.slice(0, 3).map((c) => c.country),
               top_importers: topImportCountries.slice(0, 3).map((c) => c.country),
             }}
+          />
+        </div>
+
+        <div className="border p-5 md:p-6" style={card}>
+          <SectionHeader title={`Top Exporters of ${displayLabel} (${year})`} />
+          <WorldMap
+            data={topExportCountries
+              .filter((c: any) => c.num_code)
+              .map((c: any) => ({
+                numCode: c.num_code,
+                value: metric === 'value' ? c.total_value : c.total_volume,
+                label: c.country,
+              }))}
+            formatValue={(v) => fmt(v)}
           />
         </div>
 

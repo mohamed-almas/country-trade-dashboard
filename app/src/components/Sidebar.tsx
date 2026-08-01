@@ -1,143 +1,100 @@
-import { Link, useLocation } from 'react-router-dom';
-import { BarChart3, Globe, TrendingUp, Package, Activity, Sun, Moon } from 'lucide-react';
-import { YEARS } from '../lib/utils';
+import { NavLink } from 'react-router-dom';
+import {
+  Globe, Map, Flag, Package, ArrowLeftRight, DollarSign, Newspaper, BookOpen,
+  Sun, Moon, TrendingUp,
+} from 'lucide-react';
 import { useTheme } from '../lib/ThemeContext';
+import { useMetric } from '../lib/MetricContext';
 
-interface SidebarProps {
-  selectedYear: number | 'all';
-  onYearChange: (year: number | 'all') => void;
-  metricType: 'value' | 'volume';
-  onMetricTypeChange: (type: 'value' | 'volume') => void;
-}
+const NAV_ITEMS = [
+  { path: '/', label: 'Global', icon: Globe },
+  { path: '/region', label: 'Region', icon: Map },
+  { path: '/country', label: 'Country', icon: Flag },
+  { path: '/commodity', label: 'Commodity', icon: Package },
+  { path: '/bilateral', label: 'Bilateral', icon: ArrowLeftRight },
+  { path: '/dollar-per-ton', label: '$/Ton', icon: DollarSign },
+  { path: '/news', label: 'News', icon: Newspaper },
+  { path: '/references', label: 'References', icon: BookOpen },
+];
 
-export function Sidebar({ selectedYear, onYearChange, metricType, onMetricTypeChange }: SidebarProps) {
-  const location = useLocation();
+export function Sidebar() {
   const { theme, toggleTheme } = useTheme();
-
-  const navItems = [
-    { path: '/', label: 'Overview', icon: BarChart3 },
-    { path: '/country', label: 'Country Profile', icon: Globe },
-    { path: '/bilateral', label: 'Bilateral Explorer', icon: TrendingUp },
-    { path: '/commodity', label: 'Commodity Analysis', icon: Package },
-    { path: '/trends', label: 'Trade Trends', icon: Activity },
-  ];
+  const { metric, setMetric } = useMetric();
 
   return (
-    <div
-      className="w-60 h-screen flex flex-col border-r"
-      style={{ backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' }}
+    <aside
+      className="w-56 flex-shrink-0 h-screen sticky top-0 flex flex-col border-r"
+      style={{ backgroundColor: 'var(--sidebar-bg)', borderColor: 'var(--sidebar-border)' }}
     >
-      <div className="p-6 border-b" style={{ borderColor: 'var(--border)' }}>
-        <div className="flex items-start justify-between">
-          <div className="flex-1 min-w-0">
-            <h1 className="text-xl font-outfit font-semibold" style={{ color: 'var(--accent)' }}>
-              Global Trade Intelligence
-            </h1>
-            <p className="text-[10px] font-dm-sans leading-tight mt-1" style={{ color: 'var(--text-muted)' }}>
-              [All Countries · 2020–2024 · ADPG Commodities]
-            </p>
-          </div>
-          <button
-            onClick={toggleTheme}
-            className="ml-2 mt-0.5 flex-shrink-0 p-1.5 transition-colors"
-            style={{
-              color: 'var(--text-secondary)',
-              backgroundColor: 'var(--bg-elevated)',
-            }}
-            title={theme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
-          >
-            {theme === 'dark' ? <Sun size={14} /> : <Moon size={14} />}
-          </button>
+      <div className="flex items-center gap-2.5 px-5 pt-6 pb-5">
+        <div
+          className="flex items-center justify-center w-8 h-8 flex-shrink-0"
+          style={{ background: 'linear-gradient(135deg, var(--sidebar-active-bg), var(--accent-2))', borderRadius: 'var(--radius-sm)' }}
+        >
+          <TrendingUp size={17} color="#FFFFFF" />
         </div>
+        <span className="font-outfit font-bold text-[15px] tracking-tight" style={{ color: '#FFFFFF' }}>
+          TradeVision
+        </span>
       </div>
 
-      <nav className="py-4 flex-1">
-        {navItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-
-          return (
-            <Link
-              key={item.path}
-              to={item.path}
-              className="flex items-center gap-3 px-6 py-3 text-sm font-dm-sans transition-colors border-l-2"
-              style={{
-                backgroundColor: isActive ? 'var(--bg-tertiary)' : 'transparent',
-                color: isActive ? 'var(--text-primary)' : 'var(--text-secondary)',
-                borderLeftColor: isActive ? 'var(--accent)' : 'transparent',
-              }}
-            >
-              <Icon size={16} />
-              {item.label}
-            </Link>
-          );
-        })}
+      <nav className="flex-1 px-3 space-y-0.5 overflow-y-auto">
+        {NAV_ITEMS.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            end={item.path === '/'}
+            className="flex items-center gap-2.5 px-3 py-2 text-[13px] font-dm-sans font-medium transition-colors"
+            style={({ isActive }) => ({
+              backgroundColor: isActive ? 'var(--sidebar-active-bg)' : 'transparent',
+              color: isActive ? 'var(--sidebar-active-text)' : 'var(--sidebar-text)',
+              borderRadius: 'var(--radius-sm)',
+            })}
+          >
+            <item.icon size={15} />
+            {item.label}
+          </NavLink>
+        ))}
       </nav>
 
-      <div className="p-6 border-t space-y-6" style={{ borderColor: 'var(--border)' }}>
-        <div>
-          <div className="text-xs mb-2 font-dm-sans font-semibold" style={{ color: 'var(--text-secondary)' }}>
-            Year
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {YEARS.map((year) => (
-              <button
-                key={year}
-                onClick={() => onYearChange(year)}
-                className="px-3 py-1 text-xs font-dm-sans transition-colors"
-                style={
-                  selectedYear === year
-                    ? { backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }
-                    : { backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }
-                }
-              >
-                {year}
-              </button>
-            ))}
-            <button
-              onClick={() => onYearChange('all')}
-              className="px-3 py-1 text-xs font-dm-sans transition-colors"
-              style={
-                selectedYear === 'all'
-                  ? { backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }
-                  : { backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }
-              }
-            >
-              All
-            </button>
-          </div>
+      <div className="px-3 pb-5 pt-3 space-y-3 border-t" style={{ borderColor: 'var(--sidebar-border)' }}>
+        <div
+          className="flex items-center gap-1 p-0.5"
+          style={{ backgroundColor: 'var(--sidebar-bg-elevated)', borderRadius: 'var(--radius-sm)' }}
+        >
+          <button
+            onClick={() => setMetric('value')}
+            className="flex-1 py-1.5 text-[11px] font-dm-sans font-semibold transition-colors"
+            style={{
+              borderRadius: 'calc(var(--radius-sm) - 3px)',
+              backgroundColor: metric === 'value' ? 'var(--sidebar-active-bg)' : 'transparent',
+              color: metric === 'value' ? 'var(--sidebar-active-text)' : 'var(--sidebar-text-muted)',
+            }}
+          >
+            Value
+          </button>
+          <button
+            onClick={() => setMetric('volume')}
+            className="flex-1 py-1.5 text-[11px] font-dm-sans font-semibold transition-colors"
+            style={{
+              borderRadius: 'calc(var(--radius-sm) - 3px)',
+              backgroundColor: metric === 'volume' ? 'var(--sidebar-active-bg)' : 'transparent',
+              color: metric === 'volume' ? 'var(--sidebar-active-text)' : 'var(--sidebar-text-muted)',
+            }}
+          >
+            Volume
+          </button>
         </div>
 
-        <div>
-          <div className="text-xs mb-2 font-dm-sans font-semibold" style={{ color: 'var(--text-secondary)' }}>
-            Metric
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => onMetricTypeChange('value')}
-              className="flex-1 px-3 py-1 text-xs font-dm-sans transition-colors"
-              style={
-                metricType === 'value'
-                  ? { backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }
-                  : { backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }
-              }
-            >
-              Value
-            </button>
-            <button
-              onClick={() => onMetricTypeChange('volume')}
-              className="flex-1 px-3 py-1 text-xs font-dm-sans transition-colors"
-              style={
-                metricType === 'volume'
-                  ? { backgroundColor: 'var(--accent)', color: 'var(--accent-text)' }
-                  : { backgroundColor: 'var(--input-bg)', color: 'var(--text-secondary)' }
-              }
-            >
-              Volume
-            </button>
-          </div>
-        </div>
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center justify-center gap-2 py-2 text-[12px] font-dm-sans font-medium transition-colors"
+          style={{ backgroundColor: 'var(--sidebar-bg-elevated)', color: 'var(--sidebar-text)', borderRadius: 'var(--radius-sm)' }}
+        >
+          {theme === 'dark' ? <Sun size={13} /> : <Moon size={13} />}
+          {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+        </button>
       </div>
-    </div>
+    </aside>
   );
 }

@@ -17,6 +17,7 @@ import {
 import { MapPin, TrendingUp, ChevronDown } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
 import { MarketIntelligence } from '../components/MarketIntelligence';
+import { WorldMap } from '../components/WorldMap';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
 const tp = { color: 'var(--text-primary)' };
@@ -91,6 +92,21 @@ export function RegionDashboard() {
         .select('*')
         .or(`exporter_region.eq.${selectedRegion},importer_region.eq.${selectedRegion}`)
         .order('year');
+      if (error) throw error;
+      return data ?? [];
+    },
+    enabled: !!selectedRegion,
+  });
+
+  // All countries in the region, for the choropleth map
+  const { data: regionMapData = [] } = useQuery({
+    queryKey: ['region_map_countries', selectedRegion, year],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('mv_country_aggregates')
+        .select('country, num_code, export_value, export_volume, import_value, import_volume')
+        .eq('region', selectedRegion)
+        .eq('year', year);
       if (error) throw error;
       return data ?? [];
     },
@@ -353,7 +369,7 @@ const importCommoditiesDonut = useMemo(() => {
   console.log('Top Import Commodity Card:', topImportCommodityCard[0]);
 
   return (
-    <div className="min-h-screen pt-14" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-8 space-y-6">
 
         {/* Header + Region Selector */}
@@ -484,6 +500,20 @@ const importCommoditiesDonut = useMemo(() => {
               top_exporter: topExporterCountries[0]?.country ?? null,
               top_export_commodity: topExpCommodity,
             }}
+          />
+        </div>
+
+        <div className="border p-4 md:p-5" style={card}>
+          <SectionHeader title={`${selectedRegion} — Trade Value by Country (${year})`} />
+          <WorldMap
+            data={regionMapData
+              .filter((c: any) => c.num_code)
+              .map((c: any) => ({
+                numCode: c.num_code,
+                value: metric === 'value' ? c.export_value : c.export_volume,
+                label: c.country,
+              }))}
+            formatValue={(v) => fmt(v)}
           />
         </div>
 

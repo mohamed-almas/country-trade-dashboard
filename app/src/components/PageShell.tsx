@@ -6,7 +6,7 @@ interface PageShellProps {
 
 export function PageShell({ children }: PageShellProps) {
   return (
-    <div className="min-h-screen pt-16" style={{ backgroundColor: 'var(--bg-primary)' }}>
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-screen-2xl mx-auto px-4 md:px-8 py-8">
         {children}
       </div>
