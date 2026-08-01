@@ -1,3 +1,4 @@
+# Retrigger: rebuild preview with sidebar theme + choropleth maps
 name: Deploy dashboard to GitHub Pages
 
 on:
