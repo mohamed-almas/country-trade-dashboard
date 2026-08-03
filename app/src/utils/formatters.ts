@@ -1,4 +1,5 @@
-export function formatNumber(value: number): string {
+export function formatNumber(value: number | null | undefined): string {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
   const absValue = Math.abs(value);
 
   if (absValue >= 1_000_000_000_000) {
@@ -21,11 +22,13 @@ export function formatPercentage(value: number | null | undefined): string {
   return `${value.toFixed(1)}%`;
 }
 
-export function formatCurrency(value: number): string {
+export function formatCurrency(value: number | null | undefined): string {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
   return `$${formatNumber(value)}`;
 }
 
-export function formatVolume(value: number): string {
+export function formatVolume(value: number | null | undefined): string {
+  if (value === null || value === undefined || isNaN(value)) return 'N/A';
   const absValue = Math.abs(value);
 
   if (absValue >= 1_000_000_000) {
@@ -40,6 +43,6 @@ export function formatVolume(value: number): string {
   return `${value.toFixed(1)} Tons`;
 }
 
-export function formatCompactNumber(value: number): string {
+export function formatCompactNumber(value: number | null | undefined): string {
   return formatNumber(value);
 }
