@@ -15,7 +15,6 @@ import { formatCurrency, formatVolume } from '../utils/formatters';
 import { getChartTheme } from '../utils/chartTheme';
 import { CountryLabel } from '../components/CountryLabel';
 import { WorldMap } from '../components/WorldMap';
-import { MarketIntelligence } from '../components/MarketIntelligence';
 import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ComposedChart, Line, PieChart, Pie, Cell,
@@ -847,18 +846,6 @@ export function GlobalDashboard() {
           />
         </div>
 
-        <MarketIntelligence
-          scopeKey="global"
-          scopeLabel="Global Trade"
-          kpis={{
-            total_value_2024: currentYearData ? formatCurrency(currentYearData.total_value) : null,
-            total_volume_2024: currentYearData ? formatVolume(currentYearData.total_volume) : null,
-            value_yoy: `${valueYoY >= 0 ? '+' : ''}${valueYoY.toFixed(1)}%`,
-            value_cagr_2018_2024: `${valueCagr >= 0 ? '+' : ''}${valueCagr.toFixed(1)}%`,
-            top_exporter: topExporterPartners?.[0]?.country ?? null,
-            top_commodity: topCommodityL2?.commodity_l2 ?? null,
-          }}
-        />
 
         {/* Trend + Forecast */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">

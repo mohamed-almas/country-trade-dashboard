@@ -17,7 +17,6 @@ import {
 import { Package, TrendingUp } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
 import { CountryLabel } from '../components/CountryLabel';
-import { MarketIntelligence } from '../components/MarketIntelligence';
 import { WorldMap } from '../components/WorldMap';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -399,17 +398,6 @@ export function CommodityDashboard() {
               ))}
             </ul>
           </div>
-          <MarketIntelligence
-            scopeKey={`commodity:${selectedL2 !== 'All' ? selectedL2 : selectedL1}`}
-            scopeLabel={displayLabel}
-            kpis={{
-              total_value: fmt(currentValue),
-              yoy_growth: `${currentYoY >= 0 ? '+' : ''}${currentYoY.toFixed(1)}%`,
-              cagr_since_2018: `${cagrSign(cagr)}${cagr.toFixed(1)}%`,
-              top_exporters: topExportCountries.slice(0, 3).map((c) => c.country),
-              top_importers: topImportCountries.slice(0, 3).map((c) => c.country),
-            }}
-          />
         </div>
 
         <div className="border p-5 md:p-6" style={card}>

@@ -15,7 +15,6 @@ import {
   ResponsiveContainer, ComposedChart, Line,
 } from 'recharts';
 import { TrendingUp, MapPin } from 'lucide-react';
-import { MarketIntelligence } from '../components/MarketIntelligence';
 import { WorldMap } from '../components/WorldMap';
 import { getChartTheme } from '../utils/chartTheme';
 
@@ -318,19 +317,6 @@ export function CountryDashboard() {
               ))}
             </ul>
           </div>
-          <MarketIntelligence
-            scopeKey={`country:${selectedCountry}`}
-            scopeLabel={`${selectedCountry} Trade`}
-            kpis={{
-              export_value: fmt(exportVal),
-              import_value: fmt(importVal),
-              export_yoy: `${exportYoy >= 0 ? '+' : ''}${exportYoy.toFixed(1)}%`,
-              export_cagr_2018: `${cagrSign(exportCagr)}${exportCagr.toFixed(1)}%`,
-              top_export_destination: topExportPartners[0]?.importer ?? null,
-              top_import_origin: topImportPartners[0]?.exporter ?? null,
-              top_export_commodity: topExpCommodity,
-            }}
-          />
         </div>
 
         <div className="border p-4 md:p-5" style={card}>

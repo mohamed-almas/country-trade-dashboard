@@ -16,7 +16,6 @@ import {
 } from 'recharts';
 import { MapPin, TrendingUp, ChevronDown } from 'lucide-react';
 import { getChartTheme } from '../utils/chartTheme';
-import { MarketIntelligence } from '../components/MarketIntelligence';
 import { WorldMap } from '../components/WorldMap';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -488,19 +487,6 @@ const importCommoditiesDonut = useMemo(() => {
             </ul>
           </div>
 
-          <MarketIntelligence
-            scopeKey={`region:${selectedRegion}`}
-            scopeLabel={`${selectedRegion} Trade`}
-            kpis={{
-              export_value: fmt(exportVal),
-              import_value: fmt(importVal),
-              export_yoy: `${exportYoy >= 0 ? '+' : ''}${exportYoy.toFixed(1)}%`,
-              export_cagr_2018_2024: `${cagrSign(exportCagr)}${exportCagr.toFixed(1)}%`,
-              trade_balance: fmt(Math.abs(exportVal - importVal)),
-              top_exporter: topExporterCountries[0]?.country ?? null,
-              top_export_commodity: topExpCommodity,
-            }}
-          />
         </div>
 
         <div className="border p-4 md:p-5" style={card}>

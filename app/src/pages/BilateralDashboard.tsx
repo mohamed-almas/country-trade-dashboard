@@ -13,7 +13,6 @@ import { generateAllForecasts } from '../utils/forecast';
 import { formatCurrency, formatVolume } from '../utils/formatters';
 import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ArrowLeftRight, TrendingUp, ArrowRightLeft, Scale } from 'lucide-react';
-import { MarketIntelligence } from '../components/MarketIntelligence';
 import { getChartTheme } from '../utils/chartTheme';
 
 const card = { backgroundColor: 'var(--bg-secondary)', borderColor: 'var(--border)' };
@@ -273,17 +272,6 @@ export function BilateralDashboard() {
             )}
           </div>
 
-          <MarketIntelligence
-            scopeKey={`corridor:${exporter}->${importer}`}
-            scopeLabel={`${exporter} → ${importer} Trade Corridor`}
-            kpis={{
-              trade_value: metric === 'value' ? formatCurrency(currentData?.value || 0) : formatVolume(currentData?.value || 0),
-              yoy_growth: `${yoyGrowth >= 0 ? '+' : ''}${yoyGrowth.toFixed(1)}%`,
-              cagr: `${cagr.toFixed(1)}%`,
-              top_commodity: topCommodity,
-              has_trade: !hasNoTrade,
-            }}
-          />
         </div>
 
         {/* Trade Trend + Forecast - Side by Side */}
