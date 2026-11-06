@@ -40,8 +40,10 @@ const apiJson = async (p) => (await (await api(p)).json()).data ?? [];
 // year to refresh = first year after the last BACI year loaded
 let year = Number(opt('year'));
 if (!year) {
-  const { data } = await supabase.from('baci_trade').select('year').eq('source', 'BACI').order('year', { ascending: false }).limit(1);
-  year = (data?.[0]?.year ?? 0) + 1;
+  // load_log holds one row per BACI year loaded (cheap; scanning baci_trade for max(year) can hit the API statement timeout)
+  const { data, error } = await supabase.from('load_log').select('year').order('year', { ascending: false }).limit(1);
+  if (error || !data?.length) throw new Error(`cannot determine last BACI year: ${error?.message ?? 'load_log empty'}`);
+  year = data[0].year + 1;
 }
 console.log(`Comtrade refresh for ${year}`);
 
