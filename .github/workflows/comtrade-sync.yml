@@ -1,0 +1,42 @@
+name: Monthly Comtrade refresh
+
+# Pulls newly published / revised UN Comtrade data for the first year BACI does not cover yet
+# and writes it straight to Supabase. No data files are stored in the repo or as artifacts.
+on:
+  schedule:
+    - cron: '0 5 5 * *' # 05:00 UTC on the 5th of every month
+  workflow_dispatch:
+    inputs:
+      force:
+        description: 'Re-download every reporter, even unchanged ones'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: comtrade-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: loader/package-lock.json
+      - name: Install loader dependencies
+        working-directory: loader
+        run: npm ci
+      - name: Sync Comtrade -> Supabase
+        working-directory: loader
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          COMTRADE_KEY: ${{ secrets.COMTRADE_KEY }}
+        run: node comtrade-sync.mjs ${{ inputs.force && '--force' || '' }}
